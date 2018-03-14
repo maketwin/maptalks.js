@@ -135,6 +135,9 @@ class Point {
         if (!isNil(x.x)) {
             this.x += x.x;
             this.y += x.y;
+        } else if (!isNil(x[0])) {
+            this.x += x[0];
+            this.y += x[1];
         } else {
             this.x += x;
             this.y += y;
@@ -152,6 +155,9 @@ class Point {
         if (!isNil(x.x)) {
             nx = this.x + x.x;
             ny = this.y + x.y;
+        } else if (!isNil(x[0])) {
+            nx = this.x + x[0];
+            ny = this.y + x[1];
         } else {
             nx = this.x + x;
             ny = this.y + y;
@@ -163,6 +169,9 @@ class Point {
         if (!isNil(x.x)) {
             this.x -= x.x;
             this.y -= x.y;
+        } else if (!isNil(x[0])) {
+            this.x -= x[0];
+            this.y -= x[1];
         } else {
             this.x -= x;
             this.y -= y;
@@ -184,6 +193,9 @@ class Point {
         if (!isNil(x.x)) {
             nx = this.x - x.x;
             ny = this.y - x.y;
+        } else if (!isNil(x[0])) {
+            nx = this.x - x[0];
+            ny = this.y - x[1];
         } else {
             nx = this.x - x;
             ny = this.y - y;

@@ -95,9 +95,12 @@ class Coordinate {
 
     //destructive add, to improve performance in some circumstances.
     _add(x, y) {
-        if (x instanceof Coordinate) {
+        if (!isNil(x.x)) {
             this.x += x.x;
             this.y += x.y;
+        } else if (!isNil(x[0])) {
+            this.x += x[0];
+            this.y += x[1];
         } else {
             this.x += x;
             this.y += y;
@@ -112,9 +115,12 @@ class Coordinate {
      */
     add(x, y) {
         let nx, ny;
-        if (x instanceof Coordinate) {
+        if (!isNil(x.x)) {
             nx = this.x + x.x;
             ny = this.y + x.y;
+        } else if (!isNil(x[0])) {
+            nx = this.x + x[0];
+            ny = this.y + x[1];
         } else {
             nx = this.x + x;
             ny = this.y + y;
@@ -124,9 +130,12 @@ class Coordinate {
 
     //destructive substract
     _sub(x, y) {
-        if (x instanceof Coordinate) {
+        if (!isNil(x.x)) {
             this.x -= x.x;
             this.y -= x.y;
+        } else if (!isNil(x[0])) {
+            this.x -= x[0];
+            this.y -= x[1];
         } else {
             this.x -= x;
             this.y -= y;
@@ -145,9 +154,12 @@ class Coordinate {
      */
     sub(x, y) {
         let nx, ny;
-        if (x instanceof Coordinate) {
+        if (!isNil(x.x)) {
             nx = this.x - x.x;
             ny = this.y - x.y;
+        } else if (!isNil(x[0])) {
+            nx = this.x - x[0];
+            ny = this.y - x[1];
         } else {
             nx = this.x - x;
             ny = this.y - y;

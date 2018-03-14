@@ -232,11 +232,10 @@ class TileLayer extends Layer {
         };
 
         const offset = this._getTileOffset(zoom);
-
-        const absOffset = [Math.abs(offset[0]), Math.abs(offset[1])];
+        const hasOffset = offset[0] || offset[1];
 
         let containerExtent = map.getContainerExtent();
-        const extent2d = map._get2DExtent()._expand(absOffset);
+        const extent2d = map._get2DExtent()._add(offset);
         const maskExtent = this._getMask2DExtent();
         if (maskExtent) {
             const intersection = maskExtent.intersection(extent2d);
@@ -245,15 +244,17 @@ class TileLayer extends Layer {
             }
             containerExtent = intersection.convertTo(c => map._pointToContainerPoint(c));
         }
-
-        containerExtent._expand(absOffset);
-
         const sr = this._sr;
         const mapSR = map.getSpatialReference();
         const res = sr.getResolution(zoom);
 
         //Get description of center tile including left and top offset
-        const c = this._project(map._getPrjCenter());
+        let c;
+        if (hasOffset) {
+            c = this._project(map._pointToPrj(map._prjToPoint(map._getPrjCenter())._add(offset)));
+        } else {
+            c = this._project(map._getPrjCenter());
+        }
         const pmin = this._project(map._pointToPrj(extent2d.getMin())),
             pmax = this._project(map._pointToPrj(extent2d.getMax()));
 
@@ -296,7 +297,9 @@ class TileLayer extends Layer {
                     height++;
                 }
                 const dupKey = p.round().toArray().join() + ',' + width + ',' + height;
-                p._add(offset[0], offset[1]);
+                if (hasOffset) {
+                    p._sub(offset);
+                }
                 const tileExtent = new PointExtent(p, p.add(width, height)),
                     tileInfo = {
                         'point': p,
@@ -307,6 +310,10 @@ class TileLayer extends Layer {
                         'layer' : layerId,
                     };
                 if (this._isTileInExtent(tileInfo, containerExtent)) {
+                    if (hasOffset) {
+                        tileInfo.point._add(offset);
+                        tileInfo.extent2d._add(offset);
+                    }
                     tileInfo['size'] = [width, height];
                     tileInfo['dupKey'] = dupKey; //duplicate key of the tile
                     tileInfo['id'] = this._getTileId(idx, zoom); //unique id of the tile
@@ -338,7 +345,7 @@ class TileLayer extends Layer {
         const scale = map._getResolution() / map._getResolution(z);
         let offset = this.options['offset'];
         if (isFunction(offset)) {
-            offset = offset();
+            offset = offset(this);
         }
         offset[0] *= scale;
         offset[1] *= scale;
